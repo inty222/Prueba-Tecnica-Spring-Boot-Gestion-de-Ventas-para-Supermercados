@@ -21,6 +21,6 @@ public class Producto {
     private String categoria;
     private double precio;
     private int stock;
-    @ManyToMany(mappedBy = "productos")
-    private List<Venta> ventas = new ArrayList<>();
+    @OneToMany(mappedBy = "producto")
+    private List<VentaItems> ventaItems = new ArrayList<>();
 }
