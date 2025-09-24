@@ -20,6 +20,7 @@ public class Venta {
     private Long id;
     private LocalDate fecha;
     private Boolean anulada = false;
+
     @ManyToOne
     @JoinColumn(name = "sucursal_id")
     private Sucursal sucursal;
@@ -30,4 +31,7 @@ public class Venta {
             inverseJoinColumns = @JoinColumn(name = "producto_id")
     )
     private List<Producto> productos = new ArrayList<>();
+
+    @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<VentaItems> ventaItems = new ArrayList<>();
 }
