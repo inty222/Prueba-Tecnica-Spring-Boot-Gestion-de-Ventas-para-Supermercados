@@ -20,6 +20,9 @@ public class Venta {
     private Long id;
     private LocalDate fecha;
     private Boolean anulada = false;
+    @ManyToOne
+    @JoinColumn(name = "sucursal_id")
+    private Sucursal sucursal;
     @ManyToMany
     @JoinTable(
             name = "venta_producto",
