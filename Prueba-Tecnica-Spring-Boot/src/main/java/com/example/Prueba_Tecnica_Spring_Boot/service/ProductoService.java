@@ -24,7 +24,7 @@ public class ProductoService {
                 .stream()
                 .map(p -> new ProductoDto(
                         p.getId(),
-                        p.getProducto(),
+                        p.getNombreProducto(),
                         p.getPrecio(),
                         p.getCategoria(),
                         p.getStock()))
@@ -33,7 +33,7 @@ public class ProductoService {
     //crear
     public String saveProducto(ProductoDto productoDto) {
         Producto producto = new Producto(null,
-                productoDto.getProducto(),
+                productoDto.getNombreProducto(),
                 productoDto.getCategoria(),
                 productoDto.getPrecio(),
                 productoDto.getStock(),
@@ -46,7 +46,7 @@ public class ProductoService {
     public String updateProducto(Long id, ProductoDto dto) {
         Producto producto = productoRepository.findById(id)
                 .orElseThrow(() -> new ProductoNoEncontradoException("Producto " + id + " no encontrado."));
-        producto.setProducto(dto.getProducto());
+        producto.setNombreProducto(dto.getNombreProducto());
         producto.setCategoria(dto.getCategoria());
         producto.setPrecio(dto.getPrecio());
         producto.setStock(dto.getStock());
@@ -60,5 +60,12 @@ public class ProductoService {
         Producto producto = productoRepository.findById(id)
                 .orElseThrow(() -> new ProductoNoEncontradoException("Producto " + id + " no encontrado."));
         productoRepository.delete(producto);
+    }
+
+    //listar por id
+    public Producto getProductoById(Long id){
+        Producto producto = productoRepository.findById(id)
+                .orElseThrow(() -> new ProductoNoEncontradoException("Producto " + id + " no encontrado."));;
+        return producto;
     }
 }
