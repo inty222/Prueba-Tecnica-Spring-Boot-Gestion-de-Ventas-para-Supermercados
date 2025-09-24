@@ -2,8 +2,8 @@ package com.example.Prueba_Tecnica_Spring_Boot.controller;
 
 import com.example.Prueba_Tecnica_Spring_Boot.dto.VentaCreateDto;
 import com.example.Prueba_Tecnica_Spring_Boot.dto.VentaResponseDto;
-import com.example.Prueba_Tecnica_Spring_Boot.mapper.VentaMapper;
 import com.example.Prueba_Tecnica_Spring_Boot.model.Venta;
+import com.example.Prueba_Tecnica_Spring_Boot.service.VentaMapper;
 import com.example.Prueba_Tecnica_Spring_Boot.service.VentaService;
 import jakarta.validation.Valid;
 import org.springframework.format.annotation.DateTimeFormat;

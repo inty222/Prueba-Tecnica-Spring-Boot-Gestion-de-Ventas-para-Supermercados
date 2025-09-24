@@ -4,15 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
-
-public class ProductoDto {
-    private Long id;
-    private String nombreProducto;
-    private Double precio;
-    private String categoria;
-    private int stock;
+@Data
+public class VentaItemRequestDto {
+    private Long productoId;
+    private Integer cantidad;
 }
-
