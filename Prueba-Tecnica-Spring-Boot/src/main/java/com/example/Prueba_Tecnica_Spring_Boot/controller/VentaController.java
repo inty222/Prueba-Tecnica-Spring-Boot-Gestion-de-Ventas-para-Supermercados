@@ -14,24 +14,25 @@ import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.NoSuchElementException;
-
 @RestController
 @RequestMapping("/api/ventas")
 public class VentaController {
 
     private final VentaService ventaService;
+    private final VentaMapper ventaMapper;
 
-    public VentaController(VentaService ventaService) {
+    public VentaController(VentaService ventaService, VentaMapper ventaMapper) {
         this.ventaService = ventaService;
+        this.ventaMapper = ventaMapper;
     }
 
     @PostMapping
     public ResponseEntity<VentaResponseDto> crear(@Valid @RequestBody VentaCreateDto request) {
-        Venta venta = VentaMapper.toEntity(request);
+        Venta venta = ventaMapper.toEntity(request);
         Venta creada = ventaService.registrarVenta(venta);
         return ResponseEntity
                 .created(URI.create("/api/ventas/" + creada.getId()))
-                .body(VentaMapper.toResponse(creada));
+                .body(ventaMapper.toResponse(creada));
     }
 
     @GetMapping
@@ -43,15 +44,16 @@ public class VentaController {
                 ? ventaService.listarVentasActivas()
                 : ventaService.buscarPorFechaActivas(fecha);
 
-        return ResponseEntity.ok(VentaMapper.toResponseList(ventas));
+        return ResponseEntity.ok(ventaMapper.toResponseList(ventas));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<VentaResponseDto> obtenerPorId(@PathVariable Long id) {
         return ventaService.obtenerPorIdActiva(id)
-                .map(v -> ResponseEntity.ok(VentaMapper.toResponse(v)))
+                .map(venta -> ResponseEntity.ok(ventaMapper.toResponse(venta)))
                 .orElse(ResponseEntity.notFound().build());
     }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> anular(@PathVariable Long id) {
@@ -63,3 +65,4 @@ public class VentaController {
         }
     }
 }
+
