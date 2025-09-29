@@ -1,8 +1,11 @@
 package com.example.Prueba_Tecnica_Spring_Boot.service;
 
+import com.example.Prueba_Tecnica_Spring_Boot.dto.IngresoTotalDto;
+import com.example.Prueba_Tecnica_Spring_Boot.dto.TopProductoDto;
 import com.example.Prueba_Tecnica_Spring_Boot.model.Venta;
 import com.example.Prueba_Tecnica_Spring_Boot.model.VentaItems;
 import com.example.Prueba_Tecnica_Spring_Boot.repository.VentaRepository;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,7 +15,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
-@Transactional // Por defecto transaccional para métodos de escritura
+@Transactional
 public class VentaServiceImpl implements VentaService {
 
     private final VentaRepository ventaRepository;
@@ -26,20 +29,24 @@ public class VentaServiceImpl implements VentaService {
         if (venta == null) {
             throw new IllegalArgumentException("La venta no puede ser null");
         }
-        // Defaults seguros
-        if (venta.getFecha() == null) {
-            venta.setFecha(LocalDate.now());
-        }
-        if (venta.getAnulada() == null) {
-            venta.setAnulada(false);
-        }
-        // Mantener la relación bidireccional: cada item conoce su venta
+        try {
+            if (venta.getFecha() == null) {
+                venta.setFecha(LocalDate.now());
+            }
+        } catch (Exception ignored) {}
+        try {
+            if (venta.getAnulada() == null) {
+                venta.setAnulada(false);
+            }
+        } catch (Exception ignored) {}
+
         if (venta.getVentaItems() != null) {
-            for (VentaItems item : venta.getVentaItems()) {
-                item.setVenta(venta);
+            for (VentaItems it : venta.getVentaItems()) {
+                it.setVenta(venta);
             }
         }
-        return ventaRepository.save(venta); // cascade = ALL hará el resto
+
+        return ventaRepository.save(venta);
     }
 
     @Override
@@ -52,7 +59,6 @@ public class VentaServiceImpl implements VentaService {
     @Transactional(readOnly = true)
     public List<Venta> buscarPorFechaActivas(LocalDate fecha) {
         if (fecha == null) {
-            // si no pasan fecha, devolvemos todas las activas
             return ventaRepository.findByAnuladaFalse();
         }
         return ventaRepository.findByFechaAndAnuladaFalse(fecha);
@@ -69,9 +75,38 @@ public class VentaServiceImpl implements VentaService {
         Venta v = ventaRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Venta no encontrada: " + id));
         if (Boolean.TRUE.equals(v.getAnulada())) {
-            return; // ya está anulada (idempotente)
+            return;
         }
         v.setAnulada(true);
-        ventaRepository.save(v); // borrado lógico
+        ventaRepository.save(v);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Venta> buscarPorSucursalYFechasActivas(Long sucursalId, LocalDate desde, LocalDate hasta) {
+        if (sucursalId == null || desde == null || hasta == null) {
+            throw new IllegalArgumentException("sucursalId, desde y hasta son obligatorios");
+        }
+        return ventaRepository.findBySucursal_IdAndFechaBetweenAndAnuladaFalse(sucursalId, desde, hasta);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public IngresoTotalDto ingresosTotales(Long sucursalId, LocalDate desde, LocalDate hasta) {
+        if (sucursalId == null || desde == null || hasta == null) {
+            throw new IllegalArgumentException("sucursalId, desde y hasta son obligatorios");
+        }
+        Double ingresos = ventaRepository.ingresosTotalesBySucursal(sucursalId, desde, hasta);
+        return new IngresoTotalDto(sucursalId, null, ingresos != null ? ingresos : 0.0);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<TopProductoDto> topProductos(LocalDate desde, LocalDate hasta, int limit) {
+        if (desde == null || hasta == null) {
+            throw new IllegalArgumentException("desde y hasta son obligatorios");
+        }
+        int n = Math.max(1, limit);
+        return ventaRepository.topProductos(desde, hasta, PageRequest.of(0, n));
     }
 }
