@@ -3,7 +3,6 @@ package com.example.Prueba_Tecnica_Spring_Boot.dto;
 import java.time.LocalDate;
 import java.util.List;
 
-//Respuesta al crear/consultar ventas (no exponemos la entidad JPA)
 public record VentaResponseDto(
         Long id,
         LocalDate fecha,
