@@ -3,7 +3,10 @@ package com.example.Prueba_Tecnica_Spring_Boot.service;
 import com.example.Prueba_Tecnica_Spring_Boot.model.AuthRequest;
 import com.example.Prueba_Tecnica_Spring_Boot.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
+@Service
 public class UsuarioService {
 
     @Autowired
