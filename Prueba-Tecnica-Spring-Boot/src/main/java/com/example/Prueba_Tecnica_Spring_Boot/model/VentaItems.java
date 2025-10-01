@@ -25,4 +25,11 @@ public class VentaItems{
     private Producto producto;
 
     private int cantidad;
+
+    public void setPrecioUnitario(double precio) {
+    }
+
+    public double getPrecioUnitario() {
+        return 0;
+    }
 }
