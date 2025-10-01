@@ -1,7 +1,9 @@
 package com.example.Prueba_Tecnica_Spring_Boot.controller;
 
 import com.example.Prueba_Tecnica_Spring_Boot.dto.ProductoDto;
+import com.example.Prueba_Tecnica_Spring_Boot.model.Producto;
 import com.example.Prueba_Tecnica_Spring_Boot.service.ProductoService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +25,7 @@ public class ProductoController {
     }
 
     @PostMapping("/nuevoproducto")
-    public ResponseEntity<String> crearProducto(@RequestBody ProductoDto dto) {
+    public ResponseEntity<String> crearProducto(@Valid @RequestBody ProductoDto dto) {
         String respuesta = productoService.saveProducto(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(respuesta);
     }
@@ -31,17 +33,32 @@ public class ProductoController {
     @PutMapping("/actualizarproducto/{id}")
     public ResponseEntity<String> actualizarProducto(
             @PathVariable Long id,
-            @RequestBody ProductoDto dto
+            @Valid @RequestBody ProductoDto dto
     ) {
         String respuesta = productoService.updateProducto(id, dto);
         return ResponseEntity.ok(respuesta);
     }
 
     @DeleteMapping("/eliminarproducto/{id}")
-    public ResponseEntity<Void> deleteProducto(@PathVariable Long id) {
-        productoService.deleteProducto(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<String> deleteProducto(@PathVariable Long id) {
+        String mensaje = productoService.deleteProducto(id);
+        return ResponseEntity.ok(mensaje);
     }
+//listar por id x si acaso
+@GetMapping("/{id}")
+public ResponseEntity<ProductoDto> obtenerProductoPorId(@PathVariable Long id) {
+    Producto producto = productoService.getProductoById(id);
+
+    // Convertir la entidad a DTO
+    ProductoDto dto = new ProductoDto(
+            producto.getId(),
+            producto.getNombreProducto(),
+            producto.getPrecio(),
+            producto.getCategoria(),
+            producto.getStock()
+    );
+    return ResponseEntity.ok(dto);
+}
 }
     
 

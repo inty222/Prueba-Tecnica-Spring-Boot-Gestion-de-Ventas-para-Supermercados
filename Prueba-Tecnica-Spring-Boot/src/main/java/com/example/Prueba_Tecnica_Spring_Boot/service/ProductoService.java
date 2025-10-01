@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,7 +38,7 @@ public class ProductoService {
                 productoDto.getStock(),
                 new ArrayList<>());
         productoRepository.save(producto);
-        return "Producto registrado";
+        return "Producto registrado correctamente";
     }
 
     //actualizar
@@ -56,10 +55,11 @@ public class ProductoService {
     }
 
     //eliminar
-    public void deleteProducto(Long id) {
+    public String deleteProducto(Long id) {
         Producto producto = productoRepository.findById(id)
                 .orElseThrow(() -> new ProductoNoEncontradoException("Producto " + id + " no encontrado."));
         productoRepository.delete(producto);
+        return "Producto eliminado correctamente.";
     }
 
     //listar por id

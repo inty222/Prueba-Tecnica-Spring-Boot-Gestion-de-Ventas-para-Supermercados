@@ -1,6 +1,5 @@
 package com.example.Prueba_Tecnica_Spring_Boot.exception;
 
-import com.example.Prueba_Tecnica_Spring_Boot.model.Producto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
