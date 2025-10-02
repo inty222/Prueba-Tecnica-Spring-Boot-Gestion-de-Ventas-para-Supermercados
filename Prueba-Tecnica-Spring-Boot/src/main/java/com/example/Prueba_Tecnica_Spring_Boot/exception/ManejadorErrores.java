@@ -7,17 +7,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
 public class ManejadorErrores {
-
-    @ExceptionHandler(ProductoNoEncontradoException.class)
-    public ResponseEntity<ErrorRespuesta> manejarLibroNoEncontrado(ProductoNoEncontradoException ex) {
-        ErrorRespuesta error = new ErrorRespuesta(
-                HttpStatus.NOT_FOUND.value(),
-                ex.getMessage(),
-                System.currentTimeMillis()
-        );
-        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
-    }
-
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorRespuesta> manejarErroresGenerales(Exception ex) {
         ErrorRespuesta error = new ErrorRespuesta(

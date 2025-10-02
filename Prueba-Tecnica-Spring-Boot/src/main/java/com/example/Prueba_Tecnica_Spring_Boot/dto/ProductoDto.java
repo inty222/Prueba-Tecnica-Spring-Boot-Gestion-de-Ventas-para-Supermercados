@@ -16,16 +16,16 @@ import lombok.NoArgsConstructor;
 public class ProductoDto {
     private Long id;
 
-    @NotBlank(message = "Introduzca un nombre válido")
-    @Size(min = 3, message = "Necesita completar el nombre del producto")
+    @NotBlank(message = "Introduzca un nombre completo o un nuevo producto que no esté registrado")
+    @Size(min = 2, message = "Necesita completar el nombre del producto")
     private String nombreProducto;
 
     @NotNull(message = "Introduzca el precio del producto")
-    @Positive(message = "Introduzca el precio")
+    @Positive(message = "Introduzca un precio válido")
     private Double precio;
 
     @NotBlank(message = "Seleccione una categoría")
-    @Size(min = 3, message = "Complete el nombre de la categoría")
+    @Size(min = 2, message = "Complete el nombre de la categoría")
     private String categoria;
 
     @NotNull(message = "Introduzca el stock disponible")
