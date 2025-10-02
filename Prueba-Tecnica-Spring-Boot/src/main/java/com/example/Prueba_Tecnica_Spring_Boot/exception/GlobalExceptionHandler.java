@@ -22,9 +22,12 @@ public class GlobalExceptionHandler {
         body.put("message", ex.getMessage());
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
+
+
+//para errores de validación
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorRespuesta> handleValidationErrors(MethodArgumentNotValidException ex) {
-        // Tomamos el primer error de validación
+
         String mensaje = ex.getBindingResult().getFieldErrors().stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage) // <-- se usa el message de la anotación
                 .findFirst()
@@ -35,7 +38,6 @@ public class GlobalExceptionHandler {
                 mensaje,
                 System.currentTimeMillis()
         );
-
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
