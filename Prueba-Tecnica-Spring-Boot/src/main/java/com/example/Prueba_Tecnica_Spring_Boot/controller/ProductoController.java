@@ -1,6 +1,7 @@
 package com.example.Prueba_Tecnica_Spring_Boot.controller;
 
 import com.example.Prueba_Tecnica_Spring_Boot.dto.ProductoDto;
+import com.example.Prueba_Tecnica_Spring_Boot.dto.VentaItemResponseDto;
 import com.example.Prueba_Tecnica_Spring_Boot.service.ProductoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -41,6 +42,15 @@ public class ProductoController {
     public ResponseEntity<Void> deleteProducto(@PathVariable Long id) {
         productoService.deleteProducto(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/productomasvendido")
+    public ResponseEntity<ProductoDto> productoMasVendido() {
+        ProductoDto productoDto = productoService.findProductoMasVendido();
+        if (productoDto != null){
+            return ResponseEntity.ok(productoDto);
+        }
+        return ResponseEntity.notFound().build();
     }
 }
     
