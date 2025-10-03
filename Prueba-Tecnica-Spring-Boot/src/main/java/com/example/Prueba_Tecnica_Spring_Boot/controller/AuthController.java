@@ -27,7 +27,7 @@ public class AuthController {
             String token = jwtService.generateToken(authRequest.getUsername());
             return ResponseEntity.ok(token);
         }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Nombre de usuario o contraseña incorrectos");
     }
     @PostMapping("/register")
     public ResponseEntity<?> Register(@RequestBody AuthRequest authRequest){
