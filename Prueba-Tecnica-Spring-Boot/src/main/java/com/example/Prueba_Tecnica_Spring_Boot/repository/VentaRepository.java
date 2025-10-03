@@ -1,6 +1,5 @@
 package com.example.Prueba_Tecnica_Spring_Boot.repository;
 
-import com.example.Prueba_Tecnica_Spring_Boot.dto.TopProductoDto;
 import com.example.Prueba_Tecnica_Spring_Boot.model.Venta;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

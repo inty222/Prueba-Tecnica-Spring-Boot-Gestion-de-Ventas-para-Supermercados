@@ -1,7 +1,5 @@
 package com.example.Prueba_Tecnica_Spring_Boot.service;
 
-import com.example.Prueba_Tecnica_Spring_Boot.dto.IngresoTotalDto;
-import com.example.Prueba_Tecnica_Spring_Boot.dto.TopProductoDto;
 import com.example.Prueba_Tecnica_Spring_Boot.model.Venta;
 
 import java.time.LocalDate;
