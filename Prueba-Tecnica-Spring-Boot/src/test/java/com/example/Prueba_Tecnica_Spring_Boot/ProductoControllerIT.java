@@ -19,7 +19,7 @@ public class ProductoControllerIT {
 
     @Autowired
     private MockMvc mockMvc;
-
+//test de integración
     @Test
     public void testSaveProducto() throws Exception {
         String json = "{"

@@ -14,8 +14,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/productos")
 public class ProductoController {
- 
 
+    /*CRUDs: listar productos, crear productos, filtrar productos por id,
+    actualizar productos, eliminar productos */
     @Autowired
     private ProductoService productoService;
 
@@ -44,21 +45,22 @@ public class ProductoController {
         String mensaje = productoService.deleteProducto(id);
         return ResponseEntity.ok(mensaje);
     }
-//listar por id x si acaso
-@GetMapping("/{id}")
-public ResponseEntity<ProductoDto> obtenerProductoPorId(@PathVariable Long id) {
-    Producto producto = productoService.getProductoById(id);
 
-    // Convertir la entidad a DTO
-    ProductoDto dto = new ProductoDto(
-            producto.getId(),
-            producto.getNombreProducto(),
-            producto.getPrecio(),
-            producto.getCategoria(),
-            producto.getStock()
-    );
-    return ResponseEntity.ok(dto);
-}
+    //listar por id x si acaso
+    @GetMapping("/{id}")
+    public ResponseEntity<ProductoDto> obtenerProductoPorId(@PathVariable Long id) {
+        Producto producto = productoService.getProductoById(id);
+
+        // Convertir la entidad a DTO
+        ProductoDto dto = new ProductoDto(
+                producto.getId(),
+                producto.getNombreProducto(),
+                producto.getPrecio(),
+                producto.getCategoria(),
+                producto.getStock()
+        );
+        return ResponseEntity.ok(dto);
+    }
 }
     
 
