@@ -17,7 +17,12 @@ public class UsuarioService {
                 .stream().filter(u->u.getUsername().equals(username))
                 .findFirst().orElse(null);
     }
-    public void save(AuthRequest authRequest){
+    public String save(AuthRequest authRequest){
+        String username = authRequest.getUsername();
+        if (username.equals(findByUsername(username).getUsername())){
+            return "Nombre de usuario ya registrado, elija otro.";
+        }
         usuarioRepository.save(authRequest);
+        return "Usuario registrado";
     }
 }

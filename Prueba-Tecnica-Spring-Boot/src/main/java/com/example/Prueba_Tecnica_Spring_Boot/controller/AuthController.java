@@ -32,10 +32,10 @@ public class AuthController {
     }
     @PostMapping("/register")
     public ResponseEntity<?> Register(@RequestBody AuthRequest authRequest){
+
         if (!authRequest.getUsername().isBlank()&&!authRequest.getUsername().isEmpty()
         &&!authRequest.getPassword().isEmpty()&&!authRequest.getPassword().isBlank()){
-            usuarioService.save(authRequest);
-            return ResponseEntity.status(HttpStatus.CREATED).build();
+            return ResponseEntity.status(HttpStatus.CREATED).body(usuarioService.save(authRequest));
         }
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
