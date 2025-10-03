@@ -5,7 +5,9 @@ import com.example.Prueba_Tecnica_Spring_Boot.exception.ProductoNoEncontradoExce
 import com.example.Prueba_Tecnica_Spring_Boot.model.Producto;
 import com.example.Prueba_Tecnica_Spring_Boot.repository.ProductoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,5 +77,15 @@ public class ProductoService {
         Producto producto = productoRepository.findById(id)
                 .orElseThrow(() -> new ProductoNoEncontradoException("Producto " + id + " no encontrado."));;
         return producto;
+    }
+
+
+    public ProductoDto findProductoMasVendido() {
+        Producto producto = productoRepository.findProductoMasVendido();
+        return new ProductoDto(null,
+                producto.getNombreProducto(),
+                producto.getPrecio(),
+                producto.getCategoria(),
+                producto.getStock());
     }
 }
