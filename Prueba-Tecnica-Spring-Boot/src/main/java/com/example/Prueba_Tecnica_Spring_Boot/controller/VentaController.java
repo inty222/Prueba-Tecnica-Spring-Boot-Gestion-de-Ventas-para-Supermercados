@@ -1,6 +1,5 @@
 package com.example.Prueba_Tecnica_Spring_Boot.controller;
 
-import com.example.Prueba_Tecnica_Spring_Boot.dto.TopProductoDto;
 import com.example.Prueba_Tecnica_Spring_Boot.dto.VentaCreateDto;
 import com.example.Prueba_Tecnica_Spring_Boot.dto.VentaResponseDto;
 import com.example.Prueba_Tecnica_Spring_Boot.model.Venta;
@@ -25,9 +24,9 @@ public class VentaController {
         this.ventaMapper = ventaMapper;
     }
 
-    @PostMapping
+    @PostMapping("/nuevaventa")
     @ResponseStatus(HttpStatus.CREATED)
-    public VentaResponseDto registrar(@RequestBody VentaCreateDto dto) {
+    public VentaResponseDto registrarVenta(@RequestBody VentaCreateDto dto) {
         Venta venta = ventaMapper.toEntity(dto);
         Venta guardada = ventaService.registrarVenta(venta);
         return ventaMapper.toResponse(guardada);
@@ -35,7 +34,7 @@ public class VentaController {
 
 
     @GetMapping
-    public List<VentaResponseDto> listar(
+    public List<VentaResponseDto> listarVenta(
             @RequestParam(required = false) Long sucursalId,
             @RequestParam(required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha
@@ -59,16 +58,8 @@ public class VentaController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void anular(@PathVariable Long id) {
+    public void anularVenta(@PathVariable Long id) {
         ventaService.anularVenta(id);
     }
 
-    @GetMapping("/top-productos")
-    public List<TopProductoDto> topProductos(
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate desde,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta,
-            @RequestParam(defaultValue = "10") int limit
-    ) {
-        return ventaService.topProductos(desde, hasta, limit);
-    }
 }
