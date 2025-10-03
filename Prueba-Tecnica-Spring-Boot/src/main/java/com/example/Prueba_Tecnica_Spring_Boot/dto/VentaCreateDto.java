@@ -6,8 +6,7 @@ import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.List;
 
-// Payload para POST /api/ventas
 public record VentaCreateDto(
-        LocalDate fecha, // opcional: si es null, el Service pondrá LocalDate.now()
+        LocalDate fecha,
         @NotNull @Size(min = 1) List<@Valid VentaItemCreateDto> detalle
 ) {}

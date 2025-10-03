@@ -1,19 +1,18 @@
 package com.example.Prueba_Tecnica_Spring_Boot.controller;
 
+import com.example.Prueba_Tecnica_Spring_Boot.dto.TopProductoDto;
 import com.example.Prueba_Tecnica_Spring_Boot.dto.VentaCreateDto;
 import com.example.Prueba_Tecnica_Spring_Boot.dto.VentaResponseDto;
 import com.example.Prueba_Tecnica_Spring_Boot.model.Venta;
 import com.example.Prueba_Tecnica_Spring_Boot.service.VentaMapper;
 import com.example.Prueba_Tecnica_Spring_Boot.service.VentaService;
-import jakarta.validation.Valid;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.NoSuchElementException;
+
 @RestController
 @RequestMapping("/api/ventas")
 public class VentaController {
@@ -27,42 +26,49 @@ public class VentaController {
     }
 
     @PostMapping
-    public ResponseEntity<VentaResponseDto> crear(@Valid @RequestBody VentaCreateDto request) {
-        Venta venta = ventaMapper.toEntity(request);
-        Venta creada = ventaService.registrarVenta(venta);
-        return ResponseEntity
-                .created(URI.create("/api/ventas/" + creada.getId()))
-                .body(ventaMapper.toResponse(creada));
+    @ResponseStatus(HttpStatus.CREATED)
+    public VentaResponseDto registrar(@RequestBody VentaCreateDto dto) {
+        Venta venta = ventaMapper.toEntity(dto);
+        Venta guardada = ventaService.registrarVenta(venta);
+        return ventaMapper.toResponse(guardada);
     }
+
 
     @GetMapping
-    public ResponseEntity<List<VentaResponseDto>> listar(
+    public List<VentaResponseDto> listar(
+            @RequestParam(required = false) Long sucursalId,
             @RequestParam(required = false)
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha) {
-
-        var ventas = (fecha == null)
-                ? ventaService.listarVentasActivas()
-                : ventaService.buscarPorFechaActivas(fecha);
-
-        return ResponseEntity.ok(ventaMapper.toResponseList(ventas));
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha
+    ) {
+        List<Venta> ventas;
+        if (sucursalId != null && fecha != null) {
+            ventas = ventaService.buscarPorSucursalYFechasActivas(sucursalId, fecha, fecha);
+        } else if (sucursalId != null) {
+            ventas = ventaService.buscarPorSucursalYFechasActivas(
+                    sucursalId,
+                    LocalDate.MIN,
+                    LocalDate.MAX
+            );
+        } else if (fecha != null) {
+            ventas = ventaService.buscarPorFechaActivas(fecha);
+        } else {
+            ventas = ventaService.listarVentasActivas();
+        }
+        return ventas.stream().map(ventaMapper::toResponse).toList();
     }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<VentaResponseDto> obtenerPorId(@PathVariable Long id) {
-        return ventaService.obtenerPorIdActiva(id)
-                .map(venta -> ResponseEntity.ok(ventaMapper.toResponse(venta)))
-                .orElse(ResponseEntity.notFound().build());
-    }
-
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> anular(@PathVariable Long id) {
-        try {
-            ventaService.anularVenta(id);
-            return ResponseEntity.noContent().build();
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.notFound().build();
-        }
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void anular(@PathVariable Long id) {
+        ventaService.anularVenta(id);
+    }
+
+    @GetMapping("/top-productos")
+    public List<TopProductoDto> topProductos(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate desde,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta,
+            @RequestParam(defaultValue = "10") int limit
+    ) {
+        return ventaService.topProductos(desde, hasta, limit);
     }
 }
-

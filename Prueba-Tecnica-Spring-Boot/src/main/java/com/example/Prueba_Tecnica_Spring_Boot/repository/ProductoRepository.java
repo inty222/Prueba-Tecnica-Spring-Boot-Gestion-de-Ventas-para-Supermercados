@@ -14,4 +14,5 @@ public interface ProductoRepository extends JpaRepository<Producto, Long> {
             "ORDER BY SUM(vi.cantidad) DESC " +
             "LIMIT 1", nativeQuery = true)
     Producto findProductoMasVendido();
+    boolean existsByNombreProducto(String nombreProducto);
 }

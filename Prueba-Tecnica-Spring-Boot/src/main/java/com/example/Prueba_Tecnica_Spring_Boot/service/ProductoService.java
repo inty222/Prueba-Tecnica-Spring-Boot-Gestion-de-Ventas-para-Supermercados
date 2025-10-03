@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,21 +32,29 @@ public class ProductoService {
                 .collect(Collectors.toList());
     }
     //crear
-    public String saveProducto(ProductoDto productoDto) {
+    public String saveProducto(ProductoDto dto) {
+        if (productoRepository.existsByNombreProducto(dto.getNombreProducto())) {
+            throw new IllegalArgumentException("Introduzca un nombre completo o un nuevo producto que no esté registrado");
+        }
         Producto producto = new Producto(null,
-                productoDto.getNombreProducto(),
-                productoDto.getCategoria(),
-                productoDto.getPrecio(),
-                productoDto.getStock(),
+                dto.getNombreProducto(),
+                dto.getCategoria(),
+                dto.getPrecio(),
+                dto.getStock(),
                 new ArrayList<>());
         productoRepository.save(producto);
-        return "Producto registrado";
+        return "Producto registrado correctamente";
     }
 
     //actualizar
     public String updateProducto(Long id, ProductoDto dto) {
         Producto producto = productoRepository.findById(id)
                 .orElseThrow(() -> new ProductoNoEncontradoException("Producto " + id + " no encontrado."));
+
+        if (!producto.getNombreProducto().equals(dto.getNombreProducto()) &&
+                productoRepository.existsByNombreProducto(dto.getNombreProducto())) {
+            throw new IllegalArgumentException("Introduzca un nombre completo o un nuevo producto que no esté registrado");
+        }
         producto.setNombreProducto(dto.getNombreProducto());
         producto.setCategoria(dto.getCategoria());
         producto.setPrecio(dto.getPrecio());
@@ -58,10 +65,11 @@ public class ProductoService {
     }
 
     //eliminar
-    public void deleteProducto(Long id) {
+    public String deleteProducto(Long id) {
         Producto producto = productoRepository.findById(id)
                 .orElseThrow(() -> new ProductoNoEncontradoException("Producto " + id + " no encontrado."));
         productoRepository.delete(producto);
+        return "Producto eliminado correctamente.";
     }
 
     //listar por id
