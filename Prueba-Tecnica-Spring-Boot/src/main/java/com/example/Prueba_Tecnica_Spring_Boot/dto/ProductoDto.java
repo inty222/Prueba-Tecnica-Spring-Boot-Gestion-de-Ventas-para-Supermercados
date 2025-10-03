@@ -16,6 +16,9 @@ import lombok.NoArgsConstructor;
 public class ProductoDto {
     private Long id;
 
+    /*dto con etiquetas de validación de campos para que no puedan quedar
+    en blanco, ni sean nulos. Size de 2 carácteres para que tenga que ser una palabra.
+     "Té" el mínimo. La validación también salta si se intenta duplicar el producto.*/
     @NotBlank(message = "Introduzca un nombre completo o un nuevo producto que no esté registrado")
     @Size(min = 2, message = "Necesita completar el nombre del producto")
     private String nombreProducto;
