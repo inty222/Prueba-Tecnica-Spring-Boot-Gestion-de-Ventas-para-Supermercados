@@ -4,6 +4,7 @@ import com.example.Prueba_Tecnica_Spring_Boot.dto.*;
 import com.example.Prueba_Tecnica_Spring_Boot.model.Producto;
 import com.example.Prueba_Tecnica_Spring_Boot.model.Venta;
 import com.example.Prueba_Tecnica_Spring_Boot.model.VentaItems;
+import com.example.Prueba_Tecnica_Spring_Boot.repository.SucursalRepository;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -15,10 +16,14 @@ public class VentaMapper {
 
     private final ProductoService productoService;
 
-    public VentaMapper(ProductoService productoService) {
-        this.productoService = productoService;
-    }
+    // Repositorio para cargar la sucursal a partir del sucursalId del DTO.
+    private final SucursalRepository sucursalRepository;
 
+    public VentaMapper(ProductoService productoService,
+                       SucursalRepository sucursalRepository) {
+        this.productoService = productoService;
+        this.sucursalRepository = sucursalRepository;
+    }
 
     public Venta toEntity(VentaCreateDto dto) {
         if (dto == null) return null;

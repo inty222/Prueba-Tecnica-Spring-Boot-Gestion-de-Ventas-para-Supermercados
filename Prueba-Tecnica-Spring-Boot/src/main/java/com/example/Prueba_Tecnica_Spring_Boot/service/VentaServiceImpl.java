@@ -24,10 +24,12 @@ public class VentaServiceImpl implements VentaService {
         this.ventaRepository = ventaRepository;
     }
 
+    // Registra una venta, poniendo valores por defecto
+    // fijando la relación bidireccional con VentaItems antes de guardar.
     @Override
     public Venta registrarVenta(Venta venta) {
         if (venta == null) {
-            throw new IllegalArgumentException("La venta no puede ser null");
+            throw new IllegalArgumentException("La venta no puede ser null.");
         }
         try {
             if (venta.getFecha() == null) {
@@ -45,16 +47,17 @@ public class VentaServiceImpl implements VentaService {
                 it.setVenta(venta);
             }
         }
-
         return ventaRepository.save(venta);
     }
 
+    // Lista todas las ventas activas (no anuladas).
     @Override
     @Transactional(readOnly = true)
     public List<Venta> listarVentasActivas() {
         return ventaRepository.findByAnuladaFalse();
     }
 
+    // Busca ventas activas por fecha exacta. Si fecha es null, devuelve todas las activas.
     @Override
     @Transactional(readOnly = true)
     public List<Venta> buscarPorFechaActivas(LocalDate fecha) {
@@ -64,12 +67,14 @@ public class VentaServiceImpl implements VentaService {
         return ventaRepository.findByFechaAndAnuladaFalse(fecha);
     }
 
+    // Obtiene una venta activa por id.
     @Override
     @Transactional(readOnly = true)
     public Optional<Venta> obtenerPorIdActiva(Long id) {
         return ventaRepository.findByIdAndAnuladaFalse(id);
     }
 
+    // Anula una venta si existe y no está ya anulada.
     @Override
     public void anularVenta(Long id) {
         Venta v = ventaRepository.findById(id)
@@ -81,6 +86,7 @@ public class VentaServiceImpl implements VentaService {
         ventaRepository.save(v);
     }
 
+    // Busca ventas activas por sucursal en un rango [desde, hasta].
     @Override
     @Transactional(readOnly = true)
     public List<Venta> buscarPorSucursalYFechasActivas(Long sucursalId, LocalDate desde, LocalDate hasta) {
@@ -90,6 +96,20 @@ public class VentaServiceImpl implements VentaService {
         return ventaRepository.findBySucursal_IdAndFechaBetweenAndAnuladaFalse(sucursalId, desde, hasta);
     }
 
+    // Busca ventas activas de una sucursal ordenadas por fecha descendente (ORDER BY en BD).
+    // - Valida sucursalId.
+    // - Transacción de solo lectura para optimizar.
+    // - La BD aplica el ORDER BY mediante el método derivado con OrderByFechaDesc.
+    @Override
+    @Transactional(readOnly = true)
+    public List<Venta> buscarPorSucursalActivas(Long sucursalId) {
+        if (sucursalId == null) {
+            throw new IllegalArgumentException("El parámetro sucursalId no puede ser null");
+        }
+        return ventaRepository.findBySucursal_IdAndAnuladaFalseOrderByFechaDesc(sucursalId);
+    }
+
+    // Calcula los ingresos totales de una sucursal en el rango [desde, hasta].
     @Override
     @Transactional(readOnly = true)
     public IngresoTotalDto ingresosTotales(Long sucursalId, LocalDate desde, LocalDate hasta) {
@@ -100,6 +120,7 @@ public class VentaServiceImpl implements VentaService {
         return new IngresoTotalDto(sucursalId, null, ingresos != null ? ingresos : 0.0);
     }
 
+    // Devuelve el top de productos (cantidad e importe) en el rango indicado, limitado por 'limit'.
     @Override
     @Transactional(readOnly = true)
     public List<TopProductoDto> topProductos(LocalDate desde, LocalDate hasta, int limit) {

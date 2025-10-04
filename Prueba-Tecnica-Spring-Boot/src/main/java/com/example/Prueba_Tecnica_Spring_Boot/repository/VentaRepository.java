@@ -26,6 +26,9 @@ public interface VentaRepository extends JpaRepository<Venta, Long> {
 
     List<Venta> findBySucursal_IdAndFechaBetweenAndAnuladaFalse(Long sucursalId, LocalDate desde, LocalDate hasta);
 
+    // Devuelve las ventas activas de una sucursal ordenadas por fecha descendente (la BD hace el ORDER BY).
+    List<Venta> findBySucursal_IdAndAnuladaFalseOrderByFechaDesc(Long sucursalId);
+
     @Query("""
            select coalesce(sum(vi.cantidad * p.precio), 0)
            from Venta v
