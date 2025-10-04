@@ -80,7 +80,9 @@ public class ProductoService {
     }
 
 
-    public ProductoDto findProductoMasVendido() {;
-        return productoRepository.findProductoMasVendido();
+    public ProductoDto findProductoMasVendido() {
+        Producto p = productoRepository.findProductoMasVendido();
+        return new ProductoDto(p.getId(), p.getNombreProducto(), p.getPrecio(), p.getCategoria(), p.getStock());
     }
+
 }

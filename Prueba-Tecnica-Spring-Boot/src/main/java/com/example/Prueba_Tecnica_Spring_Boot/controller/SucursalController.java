@@ -38,14 +38,14 @@ public class SucursalController {
     }
 
     // Endpoint para actualizar una sucursal existente
-    @PutMapping("/actualizar{id}")
+    @PutMapping("/actualizar/{id}")
     public ResponseEntity<SucursalDTO> actualizarSucursal(@PathVariable Long id,
                                                           @RequestBody SucursalCreateDTO dto) {
         return ResponseEntity.ok(sucursalService.actualizarSucursal(id, dto));
     }
 
     // Endpoint para eliminar una sucursal por su id
-    @DeleteMapping("/eliminar{id}")
+    @DeleteMapping("/eliminar/{id}")
     public ResponseEntity<String> eliminarSucursal(@PathVariable Long id) {
         sucursalService.eliminarSucursal(id);
         return ResponseEntity.ok("Sucursal eliminada");
