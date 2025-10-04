@@ -1,5 +1,6 @@
 package com.example.Prueba_Tecnica_Spring_Boot.controller;
 
+import com.example.Prueba_Tecnica_Spring_Boot.model.SaveResponse;
 import com.example.Prueba_Tecnica_Spring_Boot.model.Usuario;
 import com.example.Prueba_Tecnica_Spring_Boot.service.JwtService;
 import com.example.Prueba_Tecnica_Spring_Boot.service.UsuarioService;
@@ -32,9 +33,11 @@ public class AuthController {
     }
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody Usuario usuario){
+        SaveResponse response;
         if (!usuario.getUsername().isBlank()&&!usuario.getUsername().isEmpty()
         &&!usuario.getPassword().isEmpty()&&!usuario.getPassword().isBlank()){
-            return ResponseEntity.status(HttpStatus.CREATED).body(usuarioService.save(usuario));
+            response = usuarioService.save(usuario);
+            return ResponseEntity.status(response.getStatus()).body(response.getMessage());
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
