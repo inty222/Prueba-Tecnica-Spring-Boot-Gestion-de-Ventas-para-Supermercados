@@ -22,6 +22,8 @@ public interface VentaService {
 
     List<Venta> buscarPorSucursalYFechasActivas(Long sucursalId, LocalDate desde, LocalDate hasta);
 
+    List<Venta> buscarPorSucursalActivas(Long sucursalId);
+
     IngresoTotalDto ingresosTotales(Long sucursalId, LocalDate desde, LocalDate hasta);
 
     List<TopProductoDto> topProductos(LocalDate desde, LocalDate hasta, int limit);

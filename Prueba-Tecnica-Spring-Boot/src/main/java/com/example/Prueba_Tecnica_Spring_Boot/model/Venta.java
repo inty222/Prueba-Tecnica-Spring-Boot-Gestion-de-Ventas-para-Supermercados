@@ -21,8 +21,8 @@ public class Venta {
     private LocalDate fecha;
     private Boolean anulada = false;
 
-    @ManyToOne
-    @JoinColumn(name = "sucursal_id")
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "sucursal_id", nullable = false)
     private Sucursal sucursal;
     @ManyToMany
     @JoinTable(

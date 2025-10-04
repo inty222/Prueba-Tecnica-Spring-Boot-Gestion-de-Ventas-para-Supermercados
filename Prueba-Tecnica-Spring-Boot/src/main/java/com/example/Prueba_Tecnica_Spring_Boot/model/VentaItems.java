@@ -30,6 +30,8 @@ public class VentaItems{
     }
 
     public double getPrecioUnitario() {
-        return 0;
+        return (producto != null && producto.getPrecio() != 0)
+                ? producto.getPrecio()
+                : 0.0;
     }
 }
