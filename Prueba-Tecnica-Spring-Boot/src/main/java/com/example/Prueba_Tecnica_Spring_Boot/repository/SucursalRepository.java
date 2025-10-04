@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SucursalRepository extends JpaRepository<Sucursal, Long> {
-    // Interfaz que extiende JpaRepository para permitir operaciones CRUD
 
+    boolean existsByNombre(String nombre);
 }
 
