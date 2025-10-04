@@ -21,9 +21,9 @@ public class SucursalService {
     // Convierte un objeto Sucursal a un DTO
     private SucursalDTO mapToDTO(Sucursal sucursal) {
         SucursalDTO dto = new SucursalDTO();
-        dto.setId(sucursal.getId());       // Asigna el ID
-        dto.setNombre(sucursal.getNombre());   // Asigna el nombre
-        dto.setDireccion(sucursal.getDireccion()); // Asigna la dirección
+        dto.setId(sucursal.getId());
+        dto.setNombre(sucursal.getNombre());
+        dto.setDireccion(sucursal.getDireccion());
         return dto;
     }
 
@@ -44,26 +44,29 @@ public class SucursalService {
 
     // Crea una nueva sucursal a partir de un DTO de creación
     public SucursalDTO crearSucursal(SucursalCreateDTO dto) {
+        if (sucursalRepository.existsByNombre(dto.getNombre())) {
+            throw new RuntimeException("Ya existe una sucursal con ese nombre");
+        }
         Sucursal sucursal = new Sucursal();
-        sucursal.setNombre(dto.getNombre());   // Asigna nombre
-        sucursal.setDireccion(dto.getDireccion()); // Asigna dirección
-        return mapToDTO(sucursalRepository.save(sucursal)); // Guarda y devuelve DTO
+        sucursal.setNombre(dto.getNombre());
+        sucursal.setDireccion(dto.getDireccion());
+        return mapToDTO(sucursalRepository.save(sucursal));
     }
 
     // Actualiza una sucursal existente por ID
     public SucursalDTO actualizarSucursal(Long id, SucursalCreateDTO dto) {
         Sucursal sucursal = sucursalRepository.findById(id)
-                .orElseThrow(() -> new SucursalNotFoundException(id)); // Lanza excepción si no existe
-        sucursal.setNombre(dto.getNombre());       // Actualiza nombre
-        sucursal.setDireccion(dto.getDireccion()); // Actualiza dirección
-        return mapToDTO(sucursalRepository.save(sucursal)); // Guarda y devuelve DTO actualizado
+                .orElseThrow(() -> new SucursalNotFoundException(id));
+        sucursal.setNombre(dto.getNombre());
+        sucursal.setDireccion(dto.getDireccion());
+        return mapToDTO(sucursalRepository.save(sucursal));
     }
 
     // Elimina una sucursal por su ID
     public void eliminarSucursal(Long id) {
         if (!sucursalRepository.existsById(id)) {
-            throw new SucursalNotFoundException(id); // Lanza excepción si no existe
+            throw new SucursalNotFoundException(id);
         }
-        sucursalRepository.deleteById(id); // Elimina la sucursal
+        sucursalRepository.deleteById(id);
     }
 }
