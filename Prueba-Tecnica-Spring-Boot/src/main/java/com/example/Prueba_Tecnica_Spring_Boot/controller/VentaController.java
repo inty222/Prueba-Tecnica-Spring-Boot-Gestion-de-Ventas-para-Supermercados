@@ -8,6 +8,7 @@ import com.example.Prueba_Tecnica_Spring_Boot.service.VentaService;
 import jakarta.validation.Valid;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -65,7 +66,9 @@ public class VentaController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void anularVenta(@PathVariable Long id) {ventaService.anularVenta(id);
+    public ResponseEntity<String> anularVenta(@PathVariable Long id) {
+        ventaService.anularVenta(id);
+        return ResponseEntity.ok("Venta eliminada.");
     }
 
 }

@@ -2,9 +2,12 @@ package com.example.Prueba_Tecnica_Spring_Boot.service;
 
 import com.example.Prueba_Tecnica_Spring_Boot.dto.IngresoTotalDto;
 import com.example.Prueba_Tecnica_Spring_Boot.dto.TopProductoDto;
+import com.example.Prueba_Tecnica_Spring_Boot.exception.StockInsuficienteException;
+import com.example.Prueba_Tecnica_Spring_Boot.model.Producto;
 import com.example.Prueba_Tecnica_Spring_Boot.model.Venta;
 import com.example.Prueba_Tecnica_Spring_Boot.model.VentaItems;
 import com.example.Prueba_Tecnica_Spring_Boot.repository.VentaRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest; // <- necesario para topProductos
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,20 +22,24 @@ import java.util.Optional;
 @Transactional // <- escritura por defecto; en lecturas uso readOnly = true.
 public class VentaServiceImpl implements VentaService {
 
-    private final VentaRepository ventaRepository;
+    @Autowired
+    private VentaRepository ventaRepository;
 
-    public VentaServiceImpl(VentaRepository ventaRepository) {
-        this.ventaRepository = ventaRepository;
-    }
+    @Autowired
+    private ProductoService productoService;
+
+    @Autowired
+    private ProductoMapper productoMapper;
+
 
     // Registra una venta aplicando defaults y coherencia de relaciones.
     @Override
     public Venta registrarVenta(Venta venta) {
         if (venta == null) {
-            throw new IllegalArgumentException("La venta no puede ser null");
+            throw new IllegalArgumentException("La venta no puede ser null.");
         }
         if (venta.getSucursal() == null) {
-            throw new IllegalArgumentException("La venta debe tener una sucursal");
+            throw new IllegalArgumentException("La venta debe tener una sucursal.");
         }
         if (venta.getFecha() == null) {
             venta.setFecha(LocalDate.now());
@@ -43,7 +50,14 @@ public class VentaServiceImpl implements VentaService {
         if (venta.getVentaItems() != null) {
             for (VentaItems item : venta.getVentaItems()) {
                 if (item != null) {
-                    item.setVenta(venta); // asegura relación bidireccional
+                    Producto producto = item.getProducto();
+                    if(item.getCantidad()<= producto.getStock()){
+                        item.setVenta(venta);
+                        producto.setStock(producto.getStock() - item.getCantidad());
+                        productoService.updateProducto(producto.getId(), productoMapper.fromEntity(producto));
+                    }else{
+                        throw new StockInsuficienteException("El producto " + producto.getNombreProducto() + " no tiene stock suficente.");
+                    }
                 }
             }
         }
