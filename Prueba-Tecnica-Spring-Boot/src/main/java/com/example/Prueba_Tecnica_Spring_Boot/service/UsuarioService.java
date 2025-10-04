@@ -1,8 +1,10 @@
 package com.example.Prueba_Tecnica_Spring_Boot.service;
 
+import com.example.Prueba_Tecnica_Spring_Boot.model.SaveResponse;
 import com.example.Prueba_Tecnica_Spring_Boot.model.Usuario;
 import com.example.Prueba_Tecnica_Spring_Boot.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,12 +21,12 @@ public class UsuarioService {
     }
 
     //registrar un usuario
-    public String save(Usuario usuario){
+    public SaveResponse save(Usuario usuario){
         String username = usuario.getUsername();
         if (findByUsername(username)!=null){
-            return "Nombre de usuario ya registrado, elija otro.";
+            return new SaveResponse(HttpStatus.CONFLICT,"El nombre de usuario ya esta registrado, pruebe con otro nombre.");
         }
         usuarioRepository.save(usuario);
-        return "Usuario registration";
+        return new SaveResponse(HttpStatus.CREATED,"Usuario registrado exitosamente");
     }
 }
