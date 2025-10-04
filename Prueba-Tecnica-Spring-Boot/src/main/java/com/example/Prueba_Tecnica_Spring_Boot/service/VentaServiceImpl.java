@@ -5,17 +5,18 @@ import com.example.Prueba_Tecnica_Spring_Boot.dto.TopProductoDto;
 import com.example.Prueba_Tecnica_Spring_Boot.model.Venta;
 import com.example.Prueba_Tecnica_Spring_Boot.model.VentaItems;
 import com.example.Prueba_Tecnica_Spring_Boot.repository.VentaRepository;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.PageRequest; // <- necesario para topProductos
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
-@Transactional
+@Transactional // <- escritura por defecto; en lecturas uso readOnly = true.
 public class VentaServiceImpl implements VentaService {
 
     private final VentaRepository ventaRepository;
@@ -24,47 +25,64 @@ public class VentaServiceImpl implements VentaService {
         this.ventaRepository = ventaRepository;
     }
 
-    // Registra una venta, poniendo valores por defecto
-    // fijando la relación bidireccional con VentaItems antes de guardar.
+    // Registra una venta aplicando defaults y coherencia de relaciones.
     @Override
     public Venta registrarVenta(Venta venta) {
         if (venta == null) {
-            throw new IllegalArgumentException("La venta no puede ser null.");
+            throw new IllegalArgumentException("La venta no puede ser null");
         }
-        try {
-            if (venta.getFecha() == null) {
-                venta.setFecha(LocalDate.now());
-            }
-        } catch (Exception ignored) {}
-        try {
-            if (venta.getAnulada() == null) {
-                venta.setAnulada(false);
-            }
-        } catch (Exception ignored) {}
-
+        if (venta.getSucursal() == null) {
+            throw new IllegalArgumentException("La venta debe tener una sucursal");
+        }
+        if (venta.getFecha() == null) {
+            venta.setFecha(LocalDate.now());
+        }
+        if (venta.getAnulada() == null) {
+            venta.setAnulada(Boolean.FALSE);
+        }
         if (venta.getVentaItems() != null) {
-            for (VentaItems it : venta.getVentaItems()) {
-                it.setVenta(venta);
+            for (VentaItems item : venta.getVentaItems()) {
+                if (item != null) {
+                    item.setVenta(venta); // asegura relación bidireccional
+                }
             }
         }
         return ventaRepository.save(venta);
     }
 
-    // Lista todas las ventas activas (no anuladas).
+    // Lista todas las ventas activas.
     @Override
     @Transactional(readOnly = true)
     public List<Venta> listarVentasActivas() {
         return ventaRepository.findByAnuladaFalse();
     }
 
-    // Busca ventas activas por fecha exacta. Si fecha es null, devuelve todas las activas.
+    // Lista ventas activas por fecha exacta.
     @Override
     @Transactional(readOnly = true)
     public List<Venta> buscarPorFechaActivas(LocalDate fecha) {
-        if (fecha == null) {
-            return ventaRepository.findByAnuladaFalse();
-        }
+        Objects.requireNonNull(fecha, "La fecha no puede ser null");
         return ventaRepository.findByFechaAndAnuladaFalse(fecha);
+    }
+
+    // Lista ventas activas por sucursal en rango [desde, hasta].
+    @Override
+    @Transactional(readOnly = true)
+    public List<Venta> buscarPorSucursalYFechasActivas(Long sucursalId, LocalDate desde, LocalDate hasta) {
+        if (sucursalId == null || desde == null || hasta == null) {
+            throw new IllegalArgumentException("sucursalId, desde y hasta son obligatorios");
+        }
+        return ventaRepository.findBySucursal_IdAndFechaBetweenAndAnuladaFalse(sucursalId, desde, hasta);
+    }
+
+    // Lista ventas activas por sucursal sin imponer rangos de fechas (MySQL-friendly).
+    @Override
+    @Transactional(readOnly = true)
+    public List<Venta> buscarPorSucursalActivas(Long sucursalId) {
+        if (sucursalId == null) {
+            throw new IllegalArgumentException("El parámetro sucursalId no puede ser null");
+        }
+        return ventaRepository.findBySucursal_IdAndAnuladaFalseOrderByFechaDesc(sucursalId);
     }
 
     // Obtiene una venta activa por id.
@@ -80,33 +98,10 @@ public class VentaServiceImpl implements VentaService {
         Venta v = ventaRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Venta no encontrada: " + id));
         if (Boolean.TRUE.equals(v.getAnulada())) {
-            return;
+            return; // ya estaba anulada
         }
         v.setAnulada(true);
         ventaRepository.save(v);
-    }
-
-    // Busca ventas activas por sucursal en un rango [desde, hasta].
-    @Override
-    @Transactional(readOnly = true)
-    public List<Venta> buscarPorSucursalYFechasActivas(Long sucursalId, LocalDate desde, LocalDate hasta) {
-        if (sucursalId == null || desde == null || hasta == null) {
-            throw new IllegalArgumentException("sucursalId, desde y hasta son obligatorios");
-        }
-        return ventaRepository.findBySucursal_IdAndFechaBetweenAndAnuladaFalse(sucursalId, desde, hasta);
-    }
-
-    // Busca ventas activas de una sucursal ordenadas por fecha descendente (ORDER BY en BD).
-    // - Valida sucursalId.
-    // - Transacción de solo lectura para optimizar.
-    // - La BD aplica el ORDER BY mediante el método derivado con OrderByFechaDesc.
-    @Override
-    @Transactional(readOnly = true)
-    public List<Venta> buscarPorSucursalActivas(Long sucursalId) {
-        if (sucursalId == null) {
-            throw new IllegalArgumentException("El parámetro sucursalId no puede ser null");
-        }
-        return ventaRepository.findBySucursal_IdAndAnuladaFalseOrderByFechaDesc(sucursalId);
     }
 
     // Calcula los ingresos totales de una sucursal en el rango [desde, hasta].
