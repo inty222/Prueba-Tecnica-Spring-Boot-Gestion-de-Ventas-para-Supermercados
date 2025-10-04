@@ -11,8 +11,11 @@ import java.util.Date;
 @Service
 public class JwtService {
 
+    //definicion de la clave de seguridad
     String key = "HolaMuyBuenasTardesEstoEsUnaClaveSegurisima1234567890";
     SecretKey secretKey = Keys.hmacShaKeyFor(key.getBytes());
+
+    //generar un token dependiendo del nombre la hora y la clave de seguridad
     public String generateToken(String username){
         return Jwts.builder()
                 .subject(username)
@@ -22,6 +25,7 @@ public class JwtService {
                 .compact();
     }
 
+    //validar el token al hacer cualquier peticion que requiera autorizacion
     public String validateToken(String token){
         Claims claims = Jwts.parser()
                 .setSigningKey(secretKey)

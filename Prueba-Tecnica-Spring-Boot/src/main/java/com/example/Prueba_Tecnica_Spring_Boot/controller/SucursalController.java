@@ -25,27 +25,27 @@ public class SucursalController {
     }
 
     // Endpoint para obtener una sucursal por su id
-    @GetMapping("/api/productos")
+    @GetMapping("/{id}")
     public ResponseEntity<SucursalDTO> obtenerSucursal(@PathVariable Long id) {
         return ResponseEntity.ok(sucursalService.obtenerSucursalPorId(id));
     }
 
     // Endpoint para crear una nueva sucursal
-    @PostMapping ("/api/productos")
+    @PostMapping ("/crear")
     public ResponseEntity<String> crearSucursal(@Valid @RequestBody SucursalCreateDTO dto) {
         sucursalService.crearSucursal(dto);
         return ResponseEntity.ok("Sucursal creada");
     }
 
     // Endpoint para actualizar una sucursal existente
-    @PutMapping("/api/productos/{id}")
+    @PutMapping("/actualizar/{id}")
     public ResponseEntity<SucursalDTO> actualizarSucursal(@PathVariable Long id,
                                                           @RequestBody SucursalCreateDTO dto) {
         return ResponseEntity.ok(sucursalService.actualizarSucursal(id, dto));
     }
 
     // Endpoint para eliminar una sucursal por su id
-    @DeleteMapping("/api/productos/{id}")
+    @DeleteMapping("/eliminar/{id}")
     public ResponseEntity<String> eliminarSucursal(@PathVariable Long id) {
         sucursalService.eliminarSucursal(id);
         return ResponseEntity.ok("Sucursal eliminada");

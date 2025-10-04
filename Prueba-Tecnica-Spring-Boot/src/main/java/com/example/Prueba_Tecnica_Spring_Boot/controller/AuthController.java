@@ -1,6 +1,7 @@
 package com.example.Prueba_Tecnica_Spring_Boot.controller;
 
-import com.example.Prueba_Tecnica_Spring_Boot.model.AuthRequest;
+import com.example.Prueba_Tecnica_Spring_Boot.model.SaveResponse;
+import com.example.Prueba_Tecnica_Spring_Boot.model.Usuario;
 import com.example.Prueba_Tecnica_Spring_Boot.service.JwtService;
 import com.example.Prueba_Tecnica_Spring_Boot.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,24 +21,24 @@ public class AuthController {
     private UsuarioService usuarioService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody AuthRequest authRequest){
-        String username = authRequest.getUsername();
-        String password = authRequest.getPassword();
-        AuthRequest user = usuarioService.findByUsername(username);
+    public ResponseEntity<?> login(@RequestBody Usuario usuario){
+        String username = usuario.getUsername();
+        String password = usuario.getPassword();
+        Usuario user = usuarioService.findByUsername(username);
         if (user!=null&&password.equals(user.getPassword())){
-            String token = jwtService.generateToken(authRequest.getUsername());
+            String token = jwtService.generateToken(usuario.getUsername());
             return ResponseEntity.ok(token);
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Nombre de usuario o contraseña incorrectos");
     }
     @PostMapping("/register")
-    public ResponseEntity<?> Register(@RequestBody AuthRequest authRequest){
-
-        if (!authRequest.getUsername().isBlank()&&!authRequest.getUsername().isEmpty()
-        &&!authRequest.getPassword().isEmpty()&&!authRequest.getPassword().isBlank()){
-            return ResponseEntity.status(HttpStatus.CREATED).body(usuarioService.save(authRequest));
+    public ResponseEntity<?> register(@RequestBody Usuario usuario){
+        SaveResponse response;
+        if (!usuario.getUsername().isBlank()&&!usuario.getUsername().isEmpty()
+        &&!usuario.getPassword().isEmpty()&&!usuario.getPassword().isBlank()){
+            response = usuarioService.save(usuario);
+            return ResponseEntity.status(response.getStatus()).body(response.getMessage());
         }
-
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 }

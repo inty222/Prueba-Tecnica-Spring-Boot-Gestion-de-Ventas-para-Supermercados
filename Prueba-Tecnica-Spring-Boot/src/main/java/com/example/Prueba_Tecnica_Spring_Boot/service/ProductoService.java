@@ -81,11 +81,8 @@ public class ProductoService {
 
 
     public ProductoDto findProductoMasVendido() {
-        Producto producto = productoRepository.findProductoMasVendido();
-        return new ProductoDto(null,
-                producto.getNombreProducto(),
-                producto.getPrecio(),
-                producto.getCategoria(),
-                producto.getStock());
+        Producto p = productoRepository.findProductoMasVendido();
+        return new ProductoDto(p.getId(), p.getNombreProducto(), p.getPrecio(), p.getCategoria(), p.getStock());
     }
+
 }
