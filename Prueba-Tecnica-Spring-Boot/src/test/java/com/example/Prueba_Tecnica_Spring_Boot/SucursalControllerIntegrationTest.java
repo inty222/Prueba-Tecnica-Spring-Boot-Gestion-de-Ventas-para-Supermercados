@@ -14,10 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-/**
- * Pruebas de integración para el controlador de Sucursal.
- * Verifica la creación y la consulta de sucursales a través de la API REST.
- * Se ejecutan dentro de una transacción que se revierte automáticamente.
+/** esta clase verifica la creación y la consulta de sucursales a través de la API REST.
+ Se ejecutan dentro de una transacción que se revierte automáticamente.
  */
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -33,11 +31,10 @@ class SucursalControllerIntegrationTest {
     @Autowired
     private ObjectMapper objectMapper; // Para convertir objetos Java a JSON y viceversa
 
-    /**
-     * Test de integración que crea una sucursal y luego la lista.
-     * Verifica que:
-     * 1. La sucursal se crea correctamente y retorna un ID.
-     * 2. La sucursal recién creada aparece en la lista de todas las sucursales.
+    /**Test de integración que crea una sucursal y luego la lista.
+      Verifica que:
+      La sucursal se crea correctamente y retorna un ID.
+      La sucursal recién creada aparece en la lista de todas las sucursales.
      */
     @Test
     void crearYListarSucursal() throws Exception {

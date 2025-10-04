@@ -18,10 +18,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-/**
- * Pruebas unitarias para SucursalService.
- * Se verifica el comportamiento de creación, obtención, actualización y eliminación de sucursales.
- */
+// esta clase verifica el comportamiento de creación, obtención, actualización y eliminación de sucursales.
 class SucursalServiceTest {
 
     @Mock
@@ -30,18 +27,15 @@ class SucursalServiceTest {
     @InjectMocks
     private SucursalService sucursalService; // Servicio que se va a probar
 
-    /**
-     * Inicializa los mocks antes de cada prueba.
-     */
+    //Inicializa los mocks antes de cada prueba.
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
-    /**
-     * Testea la creación de una sucursal.
-     * Verifica que el resultado no sea nulo y que los datos coincidan con los esperados.
-     */
+
+     //Testea la creación de una sucursal.
+     //Verifica que el resultado no sea nulo y que los datos coincidan con los esperados.
     @Test
     void testCrearSucursal() {
         SucursalCreateDTO dto = new SucursalCreateDTO("Sucursal 1", "Direccion 1");
@@ -59,9 +53,7 @@ class SucursalServiceTest {
         verify(sucursalRepository, times(1)).save(any(Sucursal.class)); // Asegura que se llamó al repositorio
     }
 
-    /**
-     * Testea la obtención de una sucursal por ID cuando existe.
-     */
+    //Testea la obtención de una sucursal por ID cuando existe.
     @Test
     void testObtenerSucursalPorIdFound() {
         Sucursal sucursal = new Sucursal();
@@ -77,10 +69,9 @@ class SucursalServiceTest {
         assertEquals("Sucursal Test", result.getNombre());
     }
 
-    /**
-     * Testea la obtención de una sucursal por ID cuando no existe.
-     * Se espera que lance SucursalNotFoundException.
-     */
+
+     //Testea la obtención de una sucursal por ID cuando no existe.
+     //Se espera que lance SucursalNotFoundException.
     @Test
     void testObtenerSucursalPorIdNotFound() {
         when(sucursalRepository.findById(99L)).thenReturn(Optional.empty());
@@ -88,10 +79,9 @@ class SucursalServiceTest {
         assertThrows(SucursalNotFoundException.class, () -> sucursalService.obtenerSucursalPorId(99L));
     }
 
-    /**
-     * Testea la obtención de todas las sucursales.
-     * Verifica que el tamaño de la lista y los datos sean correctos.
-     */
+
+     // Testea la obtención de todas las sucursales.
+     // Verifica que el tamaño de la lista y los datos sean correctos.
     @Test
     void testListarSucursales() {
         Sucursal sucursal1 = new Sucursal();
@@ -112,10 +102,9 @@ class SucursalServiceTest {
         assertEquals("Sucursal A", result.get(0).getNombre());
     }
 
-    /**
-     * Testea la actualización de una sucursal existente.
-     * Verifica que el nombre y la dirección sean actualizados correctamente.
-     */
+
+     // Testea la actualización de una sucursal existente.
+     //Verifica que el nombre y la dirección sean actualizados correctamente.
     @Test
     void testActualizarSucursal() {
         Sucursal sucursal = new Sucursal();
@@ -133,10 +122,9 @@ class SucursalServiceTest {
         assertEquals("Dir Nueva", result.getDireccion());
     }
 
-    /**
-     * Testea la eliminación de una sucursal que no existe.
-     * Se espera que lance SucursalNotFoundException.
-     */
+
+     //Testea la eliminación de una sucursal que no existe.
+     //Se espera que lance SucursalNotFoundException.
     @Test
     void testEliminarSucursalNotFound() {
         when(sucursalRepository.existsById(99L)).thenReturn(false);
