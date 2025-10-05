@@ -99,8 +99,8 @@ public class VentaServiceImpl implements VentaService {
         return ventaRepository.findBySucursal_IdAndAnuladaFalseOrderByFechaDesc(sucursalId);
     }
 
-    @Override
     @Transactional(readOnly = true)
+    @Override
     public Optional<Venta> obtenerPorIdActiva(Long id) {
         return ventaRepository.findByIdAndAnuladaFalse(id);
     }

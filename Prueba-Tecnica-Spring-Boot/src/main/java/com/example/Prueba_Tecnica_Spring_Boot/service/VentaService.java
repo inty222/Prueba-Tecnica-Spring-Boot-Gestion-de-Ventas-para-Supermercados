@@ -3,6 +3,7 @@ package com.example.Prueba_Tecnica_Spring_Boot.service;
 import com.example.Prueba_Tecnica_Spring_Boot.dto.IngresoTotalDto;
 import com.example.Prueba_Tecnica_Spring_Boot.dto.TopProductoDto;
 import com.example.Prueba_Tecnica_Spring_Boot.model.Venta;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -25,11 +26,11 @@ public interface VentaService {
     // Busca ventas activas por sucursal sin imponer rango de fechas.
     List<Venta> buscarPorSucursalActivas(Long sucursalId);
 
+    @Transactional(readOnly = true)
+    Optional<Venta> obtenerPorIdActiva(Long id);
+
     // Anula (borrado lógico) una venta por id.
     void anularVenta(Long id);
-
-    // Obtiene una venta activa por id.
-    Optional<Venta> obtenerPorIdActiva(Long id);
 
     // Este metodo es el que implementará la clase VentaServiceImpl
     IngresoTotalDto ingresosTotales(Long sucursalId, LocalDate desde, LocalDate hasta);

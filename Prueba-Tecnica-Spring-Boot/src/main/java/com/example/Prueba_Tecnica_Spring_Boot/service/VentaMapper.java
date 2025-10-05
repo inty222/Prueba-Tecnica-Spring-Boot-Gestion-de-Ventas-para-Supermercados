@@ -32,35 +32,35 @@ public class VentaMapper {
         venta.setFecha(dto.fecha() != null ? dto.fecha() : LocalDate.now());
         venta.setAnulada(Boolean.FALSE);
 
-        // Cargar y asignar la sucursal (requiere que VentaCreateDto tenga Long sucursalId).
-        // Usamos getReferenceById para evitar un SELECT si no hace falta el estado completo.
+        // Cargar y asignar la sucursal (requiere que VentaCreateDto tenga Long sucursalId)
+        // Usamos getReferenceById para evitar un SELECT si no hace falta el estado completo
         Sucursal sucursal = sucursalRepository.getReferenceById(dto.sucursalId());
         venta.setSucursal(sucursal);
 
-        // Construir líneas (detalle) enlazando bidireccionalmente.
+        // Construir líneas (detalle) enlazando bidireccionalmente
         List<VentaItems> items = new ArrayList<>();
         if (dto.detalle() != null) {
             for (VentaItemCreateDto linea : dto.detalle()) {
                 Producto producto = productoService.getProductoById(linea.productoId());
 
                 VentaItems item = new VentaItems();
-                item.setVenta(venta);              // relación Bidireccional: hijo -> padre
-                item.setProducto(producto);        // FK al producto existente
+                item.setVenta(venta);               // relación Bidireccional: hijo -> padre
+                item.setProducto(producto);         // FK al producto existente
                 item.setCantidad(linea.cantidad()); // cantidad vendida
 
-                items.add(item);                   // añadimos a la colección temporal
+                items.add(item);                    // añadimos a la colección temporal
             }
         }
 
-        // Asignamos la colección al padre (activará cascade al persistir).
+        // Asignamos la colección al padre (activará cascade al persistir)
         venta.setVentaItems(items);
 
         return venta;
     }
 
-    // Convierte una entidad Venta a su DTO de respuesta.
-    // - Recorre las líneas y calcula subtotal = precioUnitario * cantidad.
-    // - Evita exponer entidades JPA en la API pública.
+    // Convierte una entidad Venta a su DTO de respuesta
+    // - Recorre las líneas y calcula subtotal = precioUnitario * cantidad
+    // - Evita exponer entidades JPA en la API pública
     public VentaResponseDto toResponse(Venta venta) {
         if (venta == null) return null;
 
@@ -72,7 +72,7 @@ public class VentaMapper {
                         ? it.getProducto().getNombreProducto()
                         : null;
 
-                // Precio unitario derivado del producto (ver implementación en VentaItems).
+                // Precio unitario derivado del producto (ver implementación en VentaItems)
                 Double precioUnitario = (it.getProducto() != null)
                         ? it.getProducto().getPrecio()
                         : null;
@@ -99,7 +99,7 @@ public class VentaMapper {
         );
     }
 
-    // Utilidad para listas: convierte una lista de ventas a su lista de DTOs de respuesta.
+    // Utilidad para listas: convierte una lista de ventas a su lista de DTOs de respuesta
     public List<VentaResponseDto> toResponseList(List<Venta> ventas) {
         return (ventas == null) ? List.of() : ventas.stream().map(this::toResponse).toList();
     }

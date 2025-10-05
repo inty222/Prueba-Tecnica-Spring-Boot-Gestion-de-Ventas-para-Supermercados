@@ -38,7 +38,7 @@ public class VentaController {
         return ventaMapper.toResponse(guardada);
     }
 
-    // Lista Ventas con filtros Opcionales por Sucursal y/o fecha exacta.
+    // Lista Ventas con filtros Opcionales por Sucursal y/o fecha exacta
     @GetMapping
     public List<VentaResponseDto> listarVenta(
             @RequestParam(required = false) Long sucursalId,
@@ -65,7 +65,6 @@ public class VentaController {
     public ResponseEntity<Map<String, String>> anularVenta(@PathVariable Long id) {
    
         ventaService.anularVenta(id);
-        // Devuelve un cuerpo JSON {"mensaje": "Venta eliminada."}
         return ResponseEntity.ok(Map.of("mensaje", "Venta anulada correctamente."));
     }
 
