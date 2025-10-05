@@ -31,7 +31,7 @@ public interface VentaService {
     // Obtiene una venta activa por id.
     Optional<Venta> obtenerPorIdActiva(Long id);
 
-    // Calcula ingresos totales de una sucursal en el rango [desde, hasta].
+    // Este metodo es el que implementará la clase VentaServiceImpl
     IngresoTotalDto ingresosTotales(Long sucursalId, LocalDate desde, LocalDate hasta);
 
     // Devuelve el top de productos (cantidad e importe) en el rango indicado, limitado por 'limit'.

@@ -5,6 +5,7 @@ import com.example.Prueba_Tecnica_Spring_Boot.model.Venta;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -26,19 +27,23 @@ public interface VentaRepository extends JpaRepository<Venta, Long> {
 
     List<Venta> findBySucursal_IdAndFechaBetweenAndAnuladaFalse(Long sucursalId, LocalDate desde, LocalDate hasta);
 
-    // Devuelve las ventas activas de una sucursal ordenadas por fecha descendente (la BD hace el ORDER BY).
     List<Venta> findBySucursal_IdAndAnuladaFalseOrderByFechaDesc(Long sucursalId);
 
+    /**
+     * JPQL corregida: Usa vi.producto.precio en lugar de vi.precioUnitario
+     */
     @Query("""
-           select coalesce(sum(vi.cantidad * p.precio), 0)
-           from Venta v
-           join v.ventaItems vi
-           join vi.producto p
-           where v.sucursal.id = :sucursalId
-             and v.anulada = false
-             and v.fecha between :desde and :hasta
+           SELECT SUM(vi.cantidad * vi.producto.precio) 
+           FROM Venta v 
+           JOIN v.ventaItems vi 
+           WHERE v.sucursal.id = :sucursalId 
+           AND v.anulada = false
+           AND v.fecha BETWEEN :desde AND :hasta
            """)
-    Double ingresosTotalesBySucursal(Long sucursalId, LocalDate desde, LocalDate hasta);
+    Double ingresosTotalesBySucursal(
+            @Param("sucursalId") Long sucursalId,
+            @Param("desde") LocalDate desde,
+            @Param("hasta") LocalDate hasta);
 
 
     @Query("""
