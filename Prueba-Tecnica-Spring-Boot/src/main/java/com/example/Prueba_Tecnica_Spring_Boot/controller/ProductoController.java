@@ -61,16 +61,6 @@ public class ProductoController {
         );
         return ResponseEntity.ok(dto);
     }
-
-    //Mostrar el producto mas vendido
-    @GetMapping("/productomasvendido")
-    public ResponseEntity<ProductoDto> productoMasVendido() {
-        ProductoDto productoDto = productoService.findProductoMasVendido();
-        if (productoDto != null){
-            return ResponseEntity.ok(productoDto);
-        }
-        return ResponseEntity.notFound().build();
-    }
 }
     
 
