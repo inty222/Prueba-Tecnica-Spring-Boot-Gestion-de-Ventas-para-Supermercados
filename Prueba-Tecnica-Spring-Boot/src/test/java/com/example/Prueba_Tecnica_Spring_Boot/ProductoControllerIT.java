@@ -1,6 +1,6 @@
 package com.example.Prueba_Tecnica_Spring_Boot;
 
-import com.jayway.jsonpath.JsonPath;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;

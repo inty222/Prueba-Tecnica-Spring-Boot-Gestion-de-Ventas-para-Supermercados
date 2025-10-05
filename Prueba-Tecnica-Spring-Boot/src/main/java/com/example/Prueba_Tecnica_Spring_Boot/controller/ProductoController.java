@@ -1,7 +1,6 @@
 package com.example.Prueba_Tecnica_Spring_Boot.controller;
 
 import com.example.Prueba_Tecnica_Spring_Boot.dto.ProductoDto;
-import com.example.Prueba_Tecnica_Spring_Boot.dto.VentaItemResponseDto;
 import com.example.Prueba_Tecnica_Spring_Boot.model.Producto;
 import com.example.Prueba_Tecnica_Spring_Boot.service.ProductoService;
 import jakarta.validation.Valid;
