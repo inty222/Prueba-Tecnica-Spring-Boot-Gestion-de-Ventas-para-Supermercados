@@ -64,7 +64,7 @@ public class VentaController {
         return ventas.stream().map(ventaMapper::toResponse).toList();
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/eliminarventa/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<String> anularVenta(@PathVariable Long id) {
         ventaService.anularVenta(id);
