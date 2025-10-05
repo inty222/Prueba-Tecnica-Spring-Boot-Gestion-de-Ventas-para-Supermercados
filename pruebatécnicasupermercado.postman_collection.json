@@ -1,0 +1,687 @@
+{
+	"info": {
+		"_postman_id": "5a6b1e87-a795-4183-91a8-cb79f42d6be2",
+		"name": "pruebatécnicasupermercado",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "47428764"
+	},
+	"item": [
+		{
+			"name": "register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"username\": \"tu_username\",\r\n\"password\": \"tu_contraseña\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/auth/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var token= JSON.parse(responseBody);\r",
+							"postman.setGlobalVariable(\"token\",data.token)\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"username\": \"tu_username\",\r\n\"password\": \"tu_contraseña\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/auth/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "guardar producto",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "user",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "d8bec422-617e-4aca-95a2-b0f9eee6f0f2",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "  {\r\n    \"nombreProducto\": \"Aceite de Oliva\",\r\n    \"precio\": 5.25,\r\n    \"categoria\": \"Despensa\",\r\n    \"stock\": 20\r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/productos/nuevoproducto",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"productos",
+						"nuevoproducto"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "listar producto",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "user",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "d8bec422-617e-4aca-95a2-b0f9eee6f0f2",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "  {\r\n    \"producto\": \"Aceite de Oliva\",\r\n    \"precio\": 5.25,\r\n    \"categoria\": \"Despensa\",\r\n    \"stock\": 20\r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/productos",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"productos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "actualizar producto by id",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbmRyZWEiLCJpYXQiOjE3NTk2NjAzMjAsImV4cCI6MTc1OTY2MzkyMH0.TNdcqLuRzwIU1qhYuPxPm6evwqNZi1EG1pATviSVNe4",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {   \r\n    \"nombreProducto\" : \"pera\",\r\n    \"precio\": 0.3,\r\n    \"categoria\": \"Frutería\",\r\n    \"stock\": 250\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/productos/actualizarproducto/{id}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"productos",
+						"actualizarproducto",
+						"{id}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "eliminar producto by id",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "user",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "d8bec422-617e-4aca-95a2-b0f9eee6f0f2",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/productos/eliminarproducto/{id}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"productos",
+						"eliminarproducto",
+						"{id}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get producto by id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/productos/{id}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"productos",
+						"{id}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "producto más vendido",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "user",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "d8bec422-617e-4aca-95a2-b0f9eee6f0f2",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "  {\r\n    \"producto\": \"Aceite de Oliva\",\r\n    \"precio\": 5.25,\r\n    \"categoria\": \"Despensa\",\r\n    \"stock\": 20\r\n  }"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/estadisticas/producto-mas-vendido",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"estadisticas",
+						"producto-mas-vendido"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "crear sucursal",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"nombre\": \"Tienda Norte\",\r\n    \"direccion\": \"Rúa vermella, 90\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/sucursales/crear",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"sucursales",
+						"crear"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "listar sucursales",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "user",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "d8bec422-617e-4aca-95a2-b0f9eee6f0f2",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "  {\r\n    \"producto\": \"Aceite de Oliva\",\r\n    \"precio\": 5.25,\r\n    \"categoria\": \"Despensa\",\r\n    \"stock\": 20\r\n  }"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/sucursales",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"sucursales"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "actualizar sucursales",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"nombre\": \"Tienda Norte\",\r\n    \"direccion\": \"Rúa vermella, 90\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/sucursales/actualizar/{id}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"sucursales",
+						"actualizar",
+						"{id}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "eliminar sucursal",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbmRyZWEiLCJpYXQiOjE3NTk2MDgyNzksImV4cCI6MTc1OTYxMTg3OX0.vaerpEqI4mJ17Gw4_irkrn8ep8PPJPtEVDvee_EVr48",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/sucursales/eliminar/{id}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"sucursales",
+						"eliminar",
+						"{id}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "crear venta",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbmRyZWEiLCJpYXQiOjE3NTk2MDQ0NzMsImV4cCI6MTc1OTYwODA3M30.H38sFfKDPk-ZTnGzo_4P1DPmKpAtKMq4xd_S-wDSQuc",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"sucursalId\": 1,\r\n  \"detalle\": [\r\n    { \"productoId\": 1, \"cantidad\": 2 },\r\n    { \"productoId\": 2, \"cantidad\": 5 }\r\n  ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/ventas/nuevaventa",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"ventas",
+						"nuevaventa"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "listar ventas",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/ventas",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"ventas"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "eliminar ventas",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbmRyZWEiLCJpYXQiOjE3NTk2MDgyNzksImV4cCI6MTc1OTYxMTg3OX0.vaerpEqI4mJ17Gw4_irkrn8ep8PPJPtEVDvee_EVr48",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/ventas/eliminarventa/{id}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"ventas",
+						"eliminarventa",
+						"{id}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ingresos totales",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/ventas/ingresostotales?sucursalId=1&desde=2025-10-01&hasta=2025-10-31",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"ventas",
+						"ingresostotales"
+					],
+					"query": [
+						{
+							"key": "sucursalId",
+							"value": "1"
+						},
+						{
+							"key": "desde",
+							"value": "2025-10-01"
+						},
+						{
+							"key": "hasta",
+							"value": "2025-10-31"
+						},
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						},
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "top productos",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/ventas/top-productos?desde=2025-10-01&hasta=2025-10-31&limite=1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"ventas",
+						"top-productos"
+					],
+					"query": [
+						{
+							"key": "desde",
+							"value": "2025-10-01"
+						},
+						{
+							"key": "hasta",
+							"value": "2025-10-31"
+						},
+						{
+							"key": "limite",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "token",
+			"value": ""
+		}
+	]
+}
