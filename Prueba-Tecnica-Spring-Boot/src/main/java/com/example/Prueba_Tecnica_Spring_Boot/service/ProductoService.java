@@ -5,9 +5,7 @@ import com.example.Prueba_Tecnica_Spring_Boot.exception.ProductoNoEncontradoExce
 import com.example.Prueba_Tecnica_Spring_Boot.model.Producto;
 import com.example.Prueba_Tecnica_Spring_Boot.repository.ProductoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,17 +16,13 @@ public class ProductoService {
 
     @Autowired
     private ProductoRepository productoRepository;
-
+@Autowired
+private ProductoMapper productoMapper;
     //listar
     public List<ProductoDto> listarProductos() {
         return productoRepository.findAll()
                 .stream()
-                .map(p -> new ProductoDto(
-                        p.getId(),
-                        p.getNombreProducto(),
-                        p.getPrecio(),
-                        p.getCategoria(),
-                        p.getStock()))
+                .map(productoMapper::fromEntity)
                 .collect(Collectors.toList());
     }
     //crear
@@ -36,12 +30,7 @@ public class ProductoService {
         if (productoRepository.existsByNombreProducto(dto.getNombreProducto())) {
             throw new IllegalArgumentException("Introduzca un nombre completo o un nuevo producto que no esté registrado");
         }
-        Producto producto = new Producto(null,
-                dto.getNombreProducto(),
-                dto.getCategoria(),
-                dto.getPrecio(),
-                dto.getStock(),
-                new ArrayList<>());
+        Producto producto = productoMapper.toResponse(dto);
         productoRepository.save(producto);
         return "Producto registrado correctamente";
     }
@@ -55,11 +44,9 @@ public class ProductoService {
                 productoRepository.existsByNombreProducto(dto.getNombreProducto())) {
             throw new IllegalArgumentException("Introduzca un nombre completo o un nuevo producto que no esté registrado");
         }
-        producto.setNombreProducto(dto.getNombreProducto());
-        producto.setCategoria(dto.getCategoria());
-        producto.setPrecio(dto.getPrecio());
-        producto.setStock(dto.getStock());
 
+        dto.setId(id);
+        producto= productoMapper.toResponse(dto);
         productoRepository.save(producto);
         return "Producto actualizado";
     }

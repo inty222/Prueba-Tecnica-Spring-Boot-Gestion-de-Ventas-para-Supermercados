@@ -13,7 +13,7 @@ public class ProductoMapper {
         if (dto == null) {
             return null;
         }
-        Producto producto = new Producto(null,
+        Producto producto = new Producto(dto.getId(),
                 dto.getNombreProducto(),
                 dto.getCategoria(),
                 dto.getPrecio(),
@@ -33,4 +33,5 @@ public class ProductoMapper {
                 producto.getStock()
         );
     }
+
 }
