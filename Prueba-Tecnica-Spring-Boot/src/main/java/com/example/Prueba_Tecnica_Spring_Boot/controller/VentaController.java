@@ -59,11 +59,11 @@ public class VentaController {
 
         return ventas.stream().map(ventaMapper::toResponse).toList();
     }
-
-    // Cambio: Usa Map<String, String> para asegurar un cuerpo JSON en el DELETE
-    @DeleteMapping("/{id}")
+  
+    @DeleteMapping("/eliminarventa/{id}")
     @ResponseStatus(HttpStatus.OK) // Se cambia a OK (200) para poder devolver un body con el mensaje
     public ResponseEntity<Map<String, String>> anularVenta(@PathVariable Long id) {
+   
         ventaService.anularVenta(id);
         // Devuelve un cuerpo JSON {"mensaje": "Venta eliminada."}
         return ResponseEntity.ok(Map.of("mensaje", "Venta anulada correctamente."));

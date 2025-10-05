@@ -1,7 +1,6 @@
 package com.example.Prueba_Tecnica_Spring_Boot.controller;
 
 import com.example.Prueba_Tecnica_Spring_Boot.dto.ProductoDto;
-import com.example.Prueba_Tecnica_Spring_Boot.dto.VentaItemResponseDto;
 import com.example.Prueba_Tecnica_Spring_Boot.model.Producto;
 import com.example.Prueba_Tecnica_Spring_Boot.service.ProductoService;
 import jakarta.validation.Valid;
@@ -61,16 +60,6 @@ public class ProductoController {
                 producto.getStock()
         );
         return ResponseEntity.ok(dto);
-    }
-
-    //Mostrar el producto mas vendido
-    @GetMapping("/productomasvendido")
-    public ResponseEntity<ProductoDto> productoMasVendido() {
-        ProductoDto productoDto = productoService.findProductoMasVendido();
-        if (productoDto != null){
-            return ResponseEntity.ok(productoDto);
-        }
-        return ResponseEntity.notFound().build();
     }
 }
     
