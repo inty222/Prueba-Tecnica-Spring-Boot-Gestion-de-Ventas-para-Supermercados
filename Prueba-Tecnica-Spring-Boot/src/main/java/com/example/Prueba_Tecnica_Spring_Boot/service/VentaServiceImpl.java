@@ -4,11 +4,13 @@ import com.example.Prueba_Tecnica_Spring_Boot.dto.IngresoTotalDto;
 import com.example.Prueba_Tecnica_Spring_Boot.dto.TopProductoDto;
 import com.example.Prueba_Tecnica_Spring_Boot.exception.StockInsuficienteException;
 import com.example.Prueba_Tecnica_Spring_Boot.model.Producto;
+import com.example.Prueba_Tecnica_Spring_Boot.model.Sucursal;
 import com.example.Prueba_Tecnica_Spring_Boot.model.Venta;
 import com.example.Prueba_Tecnica_Spring_Boot.model.VentaItems;
 import com.example.Prueba_Tecnica_Spring_Boot.repository.VentaRepository;
+import com.example.Prueba_Tecnica_Spring_Boot.repository.SucursalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest; // <- necesario para topProductos
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,7 +21,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Service
-@Transactional // <- escritura por defecto; en lecturas uso readOnly = true.
+@Transactional
 public class VentaServiceImpl implements VentaService {
 
     @Autowired
@@ -31,8 +33,10 @@ public class VentaServiceImpl implements VentaService {
     @Autowired
     private ProductoMapper productoMapper;
 
+    @Autowired
+    private SucursalRepository sucursalRepository;
 
-    // Registra una venta aplicando defaults y coherencia de relaciones.
+
     @Override
     public Venta registrarVenta(Venta venta) {
         if (venta == null) {
@@ -64,14 +68,12 @@ public class VentaServiceImpl implements VentaService {
         return ventaRepository.save(venta);
     }
 
-    // Lista todas las ventas activas.
     @Override
     @Transactional(readOnly = true)
     public List<Venta> listarVentasActivas() {
         return ventaRepository.findByAnuladaFalse();
     }
 
-    // Lista ventas activas por fecha exacta.
     @Override
     @Transactional(readOnly = true)
     public List<Venta> buscarPorFechaActivas(LocalDate fecha) {
@@ -79,7 +81,6 @@ public class VentaServiceImpl implements VentaService {
         return ventaRepository.findByFechaAndAnuladaFalse(fecha);
     }
 
-    // Lista ventas activas por sucursal en rango [desde, hasta].
     @Override
     @Transactional(readOnly = true)
     public List<Venta> buscarPorSucursalYFechasActivas(Long sucursalId, LocalDate desde, LocalDate hasta) {
@@ -89,7 +90,6 @@ public class VentaServiceImpl implements VentaService {
         return ventaRepository.findBySucursal_IdAndFechaBetweenAndAnuladaFalse(sucursalId, desde, hasta);
     }
 
-    // Lista ventas activas por sucursal sin imponer rangos de fechas (MySQL-friendly).
     @Override
     @Transactional(readOnly = true)
     public List<Venta> buscarPorSucursalActivas(Long sucursalId) {
@@ -99,37 +99,49 @@ public class VentaServiceImpl implements VentaService {
         return ventaRepository.findBySucursal_IdAndAnuladaFalseOrderByFechaDesc(sucursalId);
     }
 
-    // Obtiene una venta activa por id.
     @Override
     @Transactional(readOnly = true)
     public Optional<Venta> obtenerPorIdActiva(Long id) {
         return ventaRepository.findByIdAndAnuladaFalse(id);
     }
 
-    // Anula una venta si existe y no está ya anulada.
     @Override
     public void anularVenta(Long id) {
         Venta v = ventaRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Venta no encontrada: " + id));
         if (Boolean.TRUE.equals(v.getAnulada())) {
-            return; // ya estaba anulada
+            return;
         }
         v.setAnulada(true);
         ventaRepository.save(v);
     }
 
-    // Calcula los ingresos totales de una sucursal en el rango [desde, hasta].
     @Override
     @Transactional(readOnly = true)
     public IngresoTotalDto ingresosTotales(Long sucursalId, LocalDate desde, LocalDate hasta) {
+
         if (sucursalId == null || desde == null || hasta == null) {
-            throw new IllegalArgumentException("sucursalId, desde y hasta son obligatorios");
+            throw new IllegalArgumentException("sucursalId, desde y hasta son obligatorios para la consulta de ingresos totales.");
         }
+
+        String nombreSucursal = sucursalRepository.findById(sucursalId)
+                .map(Sucursal::getNombre)
+                .orElse("Sucursal Desconocida");
+
         Double ingresos = ventaRepository.ingresosTotalesBySucursal(sucursalId, desde, hasta);
-        return new IngresoTotalDto(sucursalId, null, ingresos != null ? ingresos : 0.0);
+
+        if (ingresos == null || ingresos.doubleValue() == 0.0) {
+            throw new NoSuchElementException("La sucursal '" + nombreSucursal + "' (ID: " + sucursalId +
+                    ") no registra ventas activas en el período seleccionado.");
+        }
+
+        return new IngresoTotalDto(
+                sucursalId,
+                nombreSucursal,
+                ingresos
+        );
     }
 
-    // Devuelve el top de productos (cantidad e importe) en el rango indicado, limitado por 'limit'.
     @Override
     @Transactional(readOnly = true)
     public List<TopProductoDto> topProductos(LocalDate desde, LocalDate hasta, int limit) {
